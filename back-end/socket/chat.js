@@ -24,7 +24,7 @@ module.exports = function (io) {
     */
 
     /*zone permettant de récupérer le nombre de messages par utilisateur
-    sMessage.aggregate(
+    let nbMsgUtil = sMessage.aggregate(
       [
         {$Group:{ 
             _id: "$userid",
@@ -33,6 +33,7 @@ module.exports = function (io) {
         }  
       ]
     )
+    io.emit('nbMsgUtil', nbMsgUtil)
     */
 
 
@@ -46,6 +47,7 @@ module.exports = function (io) {
       const msg = new sMessage({
         Id : id.Id,
         timestamp : new Date(),
+        pseudo : id.pseudo,
         msg : id.msg
       })
       io.emit('nouveau', id)
@@ -71,7 +73,7 @@ module.exports = function (io) {
     */
 
     /* Actualisation du nombre de message des utilisateur
-    sMessage.aggregate(
+    let nbMsgUtil = sMessage.aggregate(
       [
         {$Group:{ 
             _id: "$userid",
@@ -80,6 +82,7 @@ module.exports = function (io) {
         }  
       ]
     )
+    io.emit('nbMsgUtil', nbMsgUtil)
     */
 
     })
