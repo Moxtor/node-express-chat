@@ -364,6 +364,7 @@ b {
   cursor: pointer;
   font-family: 'Open Sans', Arial, sans-serif;
   outline: none;
+  margin-right: 20px;
 }
 .right-tabs {
   position: absolute;
@@ -485,4 +486,11 @@ ul.tabs-container {
 }
 .jspVerticalBar {
   width: 7px;
+}
+
+#number {
+  user-select: none;
+  font-size: 10px;
+  color: black;
+  margin-left: 8px;
 }

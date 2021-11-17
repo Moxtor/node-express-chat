@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
-const testSchema = mongoose.Schema({
-  text: { type: String, required: true },
-  number: { type: Number, required: true },
+const MessageSchema = mongoose.Schema({
+  Id: { type: String, required: true },
+  timestamp : {type : String, required: true },
+  msg: { type: String, required: true },
 });
 
-module.exports = mongoose.model('Test', clickSchema);
+module.exports = mongoose.model('Message', MessageSchema);

@@ -52,7 +52,7 @@
 						<i class="fa fa-circle online"></i>
 					</div>
 					<div class="name">
-						<span>John Doe</span>
+						<span id="compte">John Doe</span>
 						<i class="fa fa-angle-down"></i>
 						<span class="availability">Available</span>
 					</div>
@@ -60,10 +60,10 @@
 				</div>
 			</div>
 			<div class="chat-area">
-				<div class="title"><b>Conversation title</b><i class="fa fa-search"></i></div>
+				<div class="title"><b>Conversation title</b><span id="number"></span><i class="fa fa-search"></i></div>
 				<div class="chat-list">
-					<ul>
-						<li class="me">
+					<ul id="Chat">
+						<!--<li class="me">
 							<div class="name">
 								<span class="">John Doe</span>
 							</div>
@@ -71,8 +71,8 @@
 								<p>Hello</p>
 								<span class="msg-time">5:00 pm</span>
 							</div>
-						</li>
-						<li class="">
+						</li>-->
+						<!--<li class="">
 							<div class="name">
 								<span class="">Christian Smith</span>
 							</div>
@@ -80,15 +80,15 @@
 								<p>World</p>
 								<span class="msg-time">5:01 pm</span>
 							</div>
-						</li>
+						</li>-->
 					</ul>
 				</div>
 				<div class="input-area">
 					<div class="input-wrapper">
-						<input type="text" value="" placeholder="Message here">
+						<input type="text" value="" placeholder="Message here" id="Message">
 						<i class="fa fa-smile-o"></i>
 					</div>
-					<input type="button" value="Submit" class="send-btn">
+					<input type="button" value="Submit" onclick="recupValue()" class="send-btn">
 				</div>
 			</div>
 			<div class="right-tabs">
@@ -116,5 +116,51 @@
 		</div>
 	</div>
 </body>
+<script>
+	const server = 'http://127.0.0.1:3000'
+	const socket = io(server);
+	
+	let chat = document.getElementById("Chat")
+	let id = document.getElementById("member_list")
+	let 
 
+	function recupValue()
+	{
+		let message = document.getElementById("Message").value
+		console.log(message)
+		document.getElementById("Message").value = ""
+
+		socket.emit('nouveau',message);
+	}
+	
+	function addMessage(message)
+	{
+		let text = document.createTextNode(message),
+			il = document.createElement('li'),
+			messages = document.getElementById("Chat")
+		
+		el.appendChild(text)
+		messages.appendChild(el);
+	}
+
+	socket.on('notification', (data) => {
+        console.log('Message depuis le seveur:', data);
+    })
+
+    
+
+    socket.on('nbMsg', function(nb){
+        number.innerText = nb + " messages"
+	})
+	
+	socket.on('nouveau', function(msg){
+		addMessage(msg.message);
+	})
+    
+    fetch(`${server}/test`).then((res) => {
+        return res.json()
+    }).then((data) => {
+        console.log(data);
+    })
+</script>
 </html>
