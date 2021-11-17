@@ -12,20 +12,44 @@ module.exports = function (io) {
       io.emit('nbMsg', count)
     })
 
+    /*zone permettant de récupérer les messages des utilisateurs présent dans la base.
+
+    sMessage.aggregate(
+      [
+        {
+          _id : "$msg"
+        }
+      ]
+    )
+    */
+
+    /*zone permettant de récupérer le nombre de messages par utilisateur
+    sMessage.aggregate(
+      [
+        {$Group:{ 
+            _id: "$userid",
+            count: { $sum: 1 }
+          }
+        }  
+      ]
+    )
+    */
+
+
     // Listener sur la déconnexion
     socket.on('disconnect', () => {
       console.log(`user ${socket.id} disconnected`);
       io.emit('notification', { type: 'removed_user', data: socket.id });
     });
 
-    socket.on('nouveau', (message) => {
+    socket.on('nouveau', (id) => {
       const msg = new sMessage({
-        Id : socket.id,
+        Id : id.Id,
         timestamp : new Date(),
-        msg : message
+        msg : id.msg
       })
+      io.emit('nouveau', id)
     
-
     //Sauvegarde dans la base de données
     msg.save().then(() => {
       sMessage.count({}, function(err, count){
@@ -35,6 +59,30 @@ module.exports = function (io) {
       }).catch((error) => {
       console.log(error)
       })
+
+    /*actualisation des messsages afficher 
+      sMessage.aggregate(
+      [
+        {
+          _id : "$msg"
+        }
+      ]
+    )
+    */
+
+    /* Actualisation du nombre de message des utilisateur
+    sMessage.aggregate(
+      [
+        {$Group:{ 
+            _id: "$userid",
+            count: { $sum: 1 }
+          }
+        }  
+      ]
+    )
+    */
+
     })
+
   })
 }
