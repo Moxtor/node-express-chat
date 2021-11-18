@@ -494,3 +494,24 @@ ul.tabs-container {
   color: black;
   margin-left: 8px;
 }
+
+#erreurPseudo {
+  user-select: none;
+  font-size: 10px;
+  color: red;
+  margin-left: 8px;
+}
+
+#erreurMsg {
+  user-select: none;
+  font-size: 10px;
+  color: red;
+  margin-left: 8px;
+}
+
+#ValidPseudo {
+  user-select: none;
+  font-size: 10px;
+  color: lightgreen;
+  margin-left: 8px;
+}

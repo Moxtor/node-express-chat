@@ -12,16 +12,11 @@ module.exports = function (io) {
       io.emit('nbMsg', count)
     })
 
-    /*zone permettant de récupérer les messages des utilisateurs présent dans la base.
-
-    sMessage.aggregate(
-      [
-        {
-          _id : "$msg"
-        }
-      ]
-    )
-    */
+    //zone permettant de récupérer les messages des utilisateurs présent dans la base.
+    sMessage.find({}, (err, Message) => {
+      console.log (Message);
+      io.emit('message', Message)
+    })
 
     /*zone permettant de récupérer le nombre de messages par utilisateur
     let nbMsgUtil = sMessage.aggregate(
@@ -62,15 +57,12 @@ module.exports = function (io) {
       console.log(error)
       })
 
-    /*actualisation des messsages afficher 
-      sMessage.aggregate(
-      [
-        {
-          _id : "$msg"
-        }
-      ]
-    )
-    */
+    
+    //actualisation des messsages afficher 
+    sMessage.find({}, (err, Message) => {
+      console.log (Message);
+      io.emit('message', Message)
+    })
 
     /* Actualisation du nombre de message des utilisateur
     let nbMsgUtil = sMessage.aggregate(

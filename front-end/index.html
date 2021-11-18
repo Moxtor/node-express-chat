@@ -52,7 +52,7 @@
 						<i class="fa fa-circle online"></i>
 					</div>
 					<div class="name">
-						<span id="compte">John Doe</span>
+						<span id="compte"></span>
 						<i class="fa fa-angle-down"></i>
 						<span class="availability">Available</span>
 					</div>
@@ -65,11 +65,11 @@
 					<ul id="Chat">
 						<!--<li class="me">
 							<div class="name">
-								<span class="">John Doe</span>
+								<span class="" id="nomUtil" >John Doe</span>
 							</div>
-							<div class="message">
+							<div class="message" id="spanMsg">
 								<p>Hello</p>
-								<span class="msg-time">5:00 pm</span>
+								<span class="msg-time" id="time">5:00 pm</span>
 							</div>
 						</li>-->
 						<!--<li class="">
@@ -88,6 +88,7 @@
 						<input type="text" value="" placeholder="Message here" id="Message">
 						<i class="fa fa-smile-o"></i>
 					</div>
+					<span id="erreurMsg"></span>
 					<input type="button" value="Submit" onclick="recupValue()" class="send-btn">
 				</div>
 			</div>
@@ -111,6 +112,9 @@
 					<li></li>
 					<li></li>
 				</ul>
+				<input type="text" value="" placeholder="Pseudo" id="pseudo">
+				<input type="button" value="Se connecter" onclick="recupPseudo()" class="send-btn">
+				<span id="erreurPseudo"></span><span id="validPseudo"></span>
 				<i class="fa fa-cog"></i>
 			</div>
 		</div>
@@ -120,43 +124,118 @@
 	const server = 'http://127.0.0.1:3000'
 	const socket = io(server);
 	
-	let chat = document.getElementById("Chat")
-	let id = document.getElementById("member_list")
-	let 
+	let pseudo = '';
 
-	function recupValue()
+	function recupPseudo()
 	{
-		let message = document.getElementById("Message").value
-		console.log(message)
-		document.getElementById("Message").value = ""
+		pseudo = document.getElementById('pseudo').value
+		compte.innerText = pseudo
+		if (compte.innerText != "")
+		{
+			erreurPseudo.innerText = ""
+		}
+		else{
+			erreurPseudo.innerText = "veuillez entrer un pseudo !"
+		}
+		console.log(pseudo)
+		document.getElementById('pseudo').value = ''
+	}
+		// https://gist.github.com/gordonbrander/2230317
+		const ID = function () {
+        // Math.random should be unique because of its seeding algorithm.
+        // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+        // after the decimal.
+        return '_' + Math.random().toString(36).substr(2, 9);
+        };
 
-		socket.emit('nouveau',message);
+        let userid = '';
+        
+        if(localStorage.getItem('userid')){
+            userid = localStorage.getItem('userid');
+        } else {
+            const id = ID();
+            localStorage.setItem('userid', id)
+            userid = id;
+        }	
+	
+
+	//fonction qui recupère la valeur présente dans le message et envoie l'identifiant de l'utilisateur et le message.
+	function recupValue()
+	{	
+		if(compte.innerText == ""){
+			erreurPseudo.innerText = "veuillez entrer un pseudo !"
+			document.getElementById("Message").value = ""
+		}
+		else if (document.getElementById('Message').value == ""){
+			erreurMsg.innerText = "Vous ne pouvez pas envoyer de message vide !"	
+		}
+		else{
+			let message = document.getElementById('Message').value
+			console.log(message)
+			document.getElementById('Message').value = ""
+			erreurMsg.innerText = ""
+
+			socket.emit('nouveau', {
+				Id : userid,
+				pseudo : pseudo,
+				msg : message
+			});
+
+		}
+
 	}
 	
+	//fonction qui doit ajouter un message dans une liste avec 3 span contenant le nom d'utilisateur, le message et l'heure 
 	function addMessage(message)
 	{
-		let text = document.createTextNode(message),
-			il = document.createElement('li'),
+		let text = document.createTextNode(message.msg),
+			id = document.createTextNode(message.pseudo)
+			li = document.createElement('li'),
 			messages = document.getElementById("Chat")
+			Util = document.createElement('span')
+			spanMsg = document.createElement('p')
+			divname = document.createElement('div')
+			divname.className = "name"
+			divmessage = document.createElement('div')
+			divmessage.className = "message"
+			spantime = document.createElement('span')
+			spantime.className = "msg-time"
+			
 		
-		el.appendChild(text)
-		messages.appendChild(el);
+		Util.appendChild(id)
+		spanMsg.appendChild(text)
+		messages.appendChild(li)
+		li.appendChild(divname)
+		li.appendChild(divmessage)
+		divname.appendChild(Util)
+		divmessage.appendChild(spanMsg)
+		divmessage.appendChild(spantime);
+
 	}
 
 	socket.on('notification', (data) => {
         console.log('Message depuis le seveur:', data);
     })
 
-    
-
+	//retourne le nombre total de messages écrit
     socket.on('nbMsg', function(nb){
         number.innerText = nb + " messages"
 	})
 	
-	socket.on('nouveau', function(msg){
-		addMessage(msg.message);
+	//retour de la liste du nombre de message par utilisateur
+	socket.on('nbMsgUtil',function(nb){
+
 	})
-    
+
+	//retour de l'ensemble des messages afin de les afficher au bon format
+	socket.on('nouveau', function(msg){
+		addMessage(msg);
+		})
+	
+	socket.on('message', function(mess) {
+		console.log("retourne" + mess)
+	})
+
     fetch(`${server}/test`).then((res) => {
         return res.json()
     }).then((data) => {
